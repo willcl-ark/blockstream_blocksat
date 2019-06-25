@@ -29,13 +29,13 @@ class Order:
         self.api_status_code = None
         self.message = message
         self.network = network
-        self.bump = None
-        self.delete = None
-        self.get = None
+        self.bump_order = None
+        self.delete_order = None
+        self.get_order = None
         self.node_info = None
-        self.place = None
-        self.queued = None
-        self.sent = None
+        self.place_order = None
+        self.queued_orders = None
+        self.sent_orders = None
         self.satellite_url = None
         self.uuid = uuid
         if self.network == 'mainnet':
@@ -58,13 +58,13 @@ class Order:
         response = requests.post(url=f"{self.satellite_url}/order", data=data)
         self.api_status_code = response.status_code
         if response.status_code == 200:
-            self.place = self.handle_response(response)
-            self.auth_token = self.place['auth_token']
-            self.uuid = self.place['uuid']
+            self.place_order = self.handle_response(response)
+            self.auth_token = self.place_order['auth_token']
+            self.uuid = self.place_order['uuid']
             return
         return response.status_code, response.reason, response.text
 
-    def bump(self, bid_increase):
+    def bump_order(self, bid_increase):
         """Increase the bid for an order sitting in the transmission queue.
 
         A Lightning invoice is returned for it and, when it is paid, the increase is added to the
@@ -75,7 +75,7 @@ class Order:
         response = requests.post(url=f"{self.satellite_url}/order/{self.uuid}/bump", data=data)
         self.api_status_code = response.status_code
         if response.status_code == 200:
-            self.bump = self.handle_response(response)
+            self.bump_order = self.handle_response(response)
             return
         return response.status_code, response.reason, response.text
 
@@ -86,7 +86,7 @@ class Order:
         response = requests.get(url=f"{self.satellite_url}/order/{self.uuid}", headers=headers)
         self.api_status_code = response.status_code
         if response.status_code == 200:
-            self.get = self.handle_response(response)
+            self.get_order = self.handle_response(response)
             return
         return response.status_code, response.reason, response.text
 
@@ -97,7 +97,7 @@ class Order:
         response = requests.delete(url=f"{self.satellite_url}/order/{self.uuid}", data=data)
         self.api_status_code = response.status_code
         if response.status_code == 200:
-            self.delete = self.handle_response(response)
+            self.delete_order = self.handle_response(response)
             return
         return response.status_code, response.reason, response.text
 
@@ -153,4 +153,3 @@ class Order:
         if response.status_code == 200:
             return cls.handle_response(response)
         return response
-
