@@ -29,14 +29,13 @@ class Order:
         self.api_status_code = None
         self.message = message
         self.network = network
-        self.r_bump = None
-        self.r_delete = None
-        self.r_get = None
-        self.r_node_info = None
-        self.r_pending = None
-        self.r_place = None
-        self.r_queued = None
-        self.r_sent = None
+        self.bump = None
+        self.delete = None
+        self.get = None
+        self.node_info = None
+        self.place = None
+        self.queued = None
+        self.sent = None
         self.satellite_url = None
         self.uuid = uuid
         if self.network == 'mainnet':
@@ -59,9 +58,9 @@ class Order:
         response = requests.post(url=f"{self.satellite_url}/order", data=data)
         self.api_status_code = response.status_code
         if response.status_code == 200:
-            self.r_place = self.handle_response(response)
-            self.auth_token = self.r_place['auth_token']
-            self.uuid = self.r_place['uuid']
+            self.place = self.handle_response(response)
+            self.auth_token = self.place['auth_token']
+            self.uuid = self.place['uuid']
             return
         return response.status_code, response.reason, response.text
 
@@ -76,7 +75,7 @@ class Order:
         response = requests.post(url=f"{self.satellite_url}/order/{self.uuid}/bump", data=data)
         self.api_status_code = response.status_code
         if response.status_code == 200:
-            self.r_bump = self.handle_response(response)
+            self.bump = self.handle_response(response)
             return
         return response.status_code, response.reason, response.text
 
@@ -87,7 +86,7 @@ class Order:
         response = requests.get(url=f"{self.satellite_url}/order/{self.uuid}", headers=headers)
         self.api_status_code = response.status_code
         if response.status_code == 200:
-            self.r_get = self.handle_response(response)
+            self.get = self.handle_response(response)
             return
         return response.status_code, response.reason, response.text
 
@@ -98,64 +97,60 @@ class Order:
         response = requests.delete(url=f"{self.satellite_url}/order/{self.uuid}", data=data)
         self.api_status_code = response.status_code
         if response.status_code == 200:
-            self.r_delete = self.handle_response(response)
+            self.delete = self.handle_response(response)
             return
         return response.status_code, response.reason, response.text
 
-    def pending(self, before_iso8601=None):
+    @classmethod
+    def pending(cls, sat_url, before_iso8601=None):
         """Retrieve a list of 20 orders awaiting payment ordered by creation time.
 
         For pagination, optionally specify a before parameter (in ISO 8601 format) that specifies
         that the 20 orders immediately prior to the given time be returned.
         """
         if before_iso8601:
-            response =  requests.get(url=f"{self.satellite_url}/orders/pending?before={before_iso8601}")
+            response = requests.get(url=f"{sat_url}/orders/pending?before={before_iso8601}")
         else:
-            response = requests.get(url=f"{self.satellite_url}/orders/pending")
-        self.api_status_code = response.status_code
+            response = requests.get(url=f"{sat_url}/orders/pending")
         if response.status_code == 200:
-            self.r_pending = self.handle_response(response)
-            return
+            return cls.handle_response(response)
         return response.status_code, response.reason, response.text
 
-    def queued(self, limit=None):
+    @classmethod
+    def queued(cls, sat_url, limit=None):
         """Retrieve a list of paid, but unsent orders in descending order of bid-per-byte.
         Both pending orders and the order currently being transmitted are returned.
         Optionally, accepts a parameter specifying how many queued order to return.
         """
         if limit:
-            response = requests.get(url=f"{self.satellite_url}/orders/queued?limit={limit}")
+            response = requests.get(url=f"{sat_url}/orders/queued?limit={limit}")
         else:
-            response = requests.get(url=f"{self.satellite_url}/orders/queued")
-        self.api_status_code = response.status_code
+            response = requests.get(url=f"{sat_url}/orders/queued")
         if response.status_code == 200:
-            self.r_queued = self.handle_response(response)
-            return
+            return cls.handle_response(response)
         return response.status_code, response.reason, response.text
 
-    def sent(self, before_iso8601=None):
+    @classmethod
+    def sent(cls, sat_url, before_iso8601=None):
         """Retrieves a list of up to 20 sent orders in reverse chronological order.
         For pagination, optionally specify a before parameter (in ISO 8601 format) that specifies
         that the 20 orders immediately prior to the given time be returned.
         """
         if before_iso8601:
-            response = requests.get(url=f"{self.satellite_url}/orders/sent?before={before_iso8601}")
+            response = requests.get(url=f"{sat_url}/orders/sent?before={before_iso8601}")
         else:
-            response = requests.get(url=f"{self.satellite_url}/orders/sent")
-        self.api_status_code = response.status_code
+            response = requests.get(url=f"{sat_url}/orders/sent")
         if response.status_code == 200:
-            self.r_sent = self.handle_response(response)
-            return
+            return cls.handle_response(response)
         return response.status_code, response.reason, response.text
 
-    def sat_ln_node_info(self):
+    @classmethod
+    def sat_ln_node_info(cls, sat_url):
         """Returns information about the c-lightning node where satellite API payments are
         terminated.
         """
-        response = requests.get(url=f"{self.satellite_url}/info")
-        self.api_status_code = response.status_code
+        response = requests.get(url=f"{sat_url}/info")
         if response.status_code == 200:
-            self.r_node_info = self.handle_response(response)
-            return
+            return cls.handle_response(response)
         return response
 
