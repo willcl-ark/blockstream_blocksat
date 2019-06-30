@@ -1,4 +1,3 @@
-import functools
 import json
 
 import requests
@@ -6,20 +5,6 @@ import requests
 SATELLITE_API = "https://api.blockstream.space"
 TESTNET_SATELLITE_API = "https://api.blockstream.space/testnet"
 
-
-# def handle_response(func):
-#     """Return json.loads of response.text if successful, and response.status_code if unsuccessful
-#     """
-#
-#     @functools.wraps(func)
-#     def handle_response_wrapper(*args, **kwargs):
-#         response = func(*args, **kwargs)
-#         if response.status_code == 200:
-#             response.attr = json.loads(response.text)
-#             return
-#         return response.status_code, response.reason, response.text
-#
-#     return handle_response_wrapper
 
 def handle_response(response):
     return json.loads(response.text)
@@ -32,13 +17,10 @@ class Order:
         self.api_status_code = None
         self.message = message
         self.network = network
-        self.bump_order = None
-        self.delete_order = None
-        self.get_order = None
-        self.node_info = None
-        self.place_order = None
-        self.queued_orders = None
-        self.sent_orders = None
+        self.bump_response = None
+        self.delete_response = None
+        self.get_response = None
+        self.place_response = None
         self.satellite_url = None
         self.uuid = uuid
         if self.network == 'mainnet':
@@ -57,9 +39,9 @@ class Order:
         response = requests.post(url=f"{self.satellite_url}/order", data=data)
         self.api_status_code = response.status_code
         if response.status_code == 200:
-            self.place_order = handle_response(response)
-            self.auth_token = self.place_order['auth_token']
-            self.uuid = self.place_order['uuid']
+            self.place_response = handle_response(response)
+            self.auth_token = self.place_response['auth_token']
+            self.uuid = self.place_response['uuid']
             return
         return response.status_code, response.reason, response.text
 
@@ -74,7 +56,7 @@ class Order:
         response = requests.post(url=f"{self.satellite_url}/order/{self.uuid}/bump", data=data)
         self.api_status_code = response.status_code
         if response.status_code == 200:
-            self.bump_order = handle_response(response)
+            self.bump_response = handle_response(response)
             return
         return response.status_code, response.reason, response.text
 
@@ -85,7 +67,7 @@ class Order:
         response = requests.get(url=f"{self.satellite_url}/order/{self.uuid}", headers=headers)
         self.api_status_code = response.status_code
         if response.status_code == 200:
-            self.get_order = handle_response(response)
+            self.get_response = handle_response(response)
             return
         return response.status_code, response.reason, response.text
 
@@ -96,12 +78,12 @@ class Order:
         response = requests.delete(url=f"{self.satellite_url}/order/{self.uuid}", data=data)
         self.api_status_code = response.status_code
         if response.status_code == 200:
-            self.delete_order = handle_response(response)
+            self.delete_response = handle_response(response)
             return
         return response.status_code, response.reason, response.text
 
 
-def pending(sat_url, before_iso8601=None):
+def pending_orders(sat_url, before_iso8601=None):
     """Retrieve a list of 20 orders awaiting payment ordered by creation time.
 
     For pagination, optionally specify a before parameter (in ISO 8601 format) that specifies
@@ -116,7 +98,7 @@ def pending(sat_url, before_iso8601=None):
     return response.status_code, response.reason, response.text
 
 
-def queued(sat_url, limit=None):
+def queued_orders(sat_url, limit=None):
     """Retrieve a list of paid, but unsent orders in descending order of bid-per-byte.
     Both pending orders and the order currently being transmitted are returned.
     Optionally, accepts a parameter specifying how many queued order to return.
