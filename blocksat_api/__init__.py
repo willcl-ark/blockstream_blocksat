@@ -1,1 +1,1 @@
-name = "blocksat_api"
+name = "blocksat"

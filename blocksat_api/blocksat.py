@@ -1,4 +1,5 @@
 import json
+from sys import getsizeof
 
 import requests
 
@@ -16,6 +17,7 @@ class Order:
         self.auth_token = auth_token
         self.api_status_code = None
         self.message = message
+        self.size = getsizeof(self.message)
         self.network = network
         self.bump_response = None
         self.delete_response = None
