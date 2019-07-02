@@ -6,7 +6,7 @@ Usage
 To import the Class and satellite APIs for mainnet and testnet:
 
 ```python
-from rest_api import *
+from blocksat_api import blocksat
 ```
 
 -----
@@ -15,7 +15,7 @@ Create a new order object to place a new order, increase an order bid, get an or
 
 ```python
 # create a new order object with optional message and network
-o = Order(message='Hello, world.', network='mainnet')
+o = blocksat.Order(message='Hello, world.', network='mainnet')
 ```
 
 Methods called will return nothing upon success, storing the API status_code and a json-encoded response.text in the appropriate object attribute.
@@ -27,7 +27,7 @@ To check pending orders, queued orders, sent orders or the satellite lightning n
 
 ```python
 # to check sent_orders
-sent_orders = sent_orders(sat_url=SATELLITE_API)
+sent_orders = blocksat.sent_orders(sat_url=blocksat.SATELLITE_API)
 ```
 
 ------
