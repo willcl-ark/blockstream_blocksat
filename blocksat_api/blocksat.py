@@ -10,8 +10,7 @@ def place(message, bid, satellite_url):
     If successful, the response includes the JSON Lightning invoice as returned by Lightning
     Charge's POST /invoice and an authentication token that can be used to modify the order.
     """
-    data = {"message": message,
-            "bid": bid}
+    data = {"message": message, "bid": bid}
     return requests.post(url=f"{satellite_url}/order", data=data, timeout=30)
 
 
@@ -21,16 +20,19 @@ def bump_order(uuid, auth_token, bid_increase, satellite_url):
     A Lightning invoice is returned for it and, when it is paid, the increase is added to the
     current bid.
     """
-    data = {"bid_increase": bid_increase,
-            "auth_token": auth_token}
-    return requests.post(url=f"{satellite_url}/order/{uuid}/bump", data=data, timeout=30)
+    data = {"bid_increase": bid_increase, "auth_token": auth_token}
+    return requests.post(
+        url=f"{satellite_url}/order/{uuid}/bump", data=data, timeout=30
+    )
 
 
 def get(uuid, auth_token, satellite_url):
     """Retrieve an order by UUID.
     """
     headers = {"X-Auth-Token": auth_token}
-    return requests.get(url=f"{satellite_url}/order/{uuid}", headers=headers, timeout=30)
+    return requests.get(
+        url=f"{satellite_url}/order/{uuid}", headers=headers, timeout=30
+    )
 
 
 def delete(uuid, auth_token, satellite_url):
@@ -47,7 +49,9 @@ def pending_orders(satellite_url, before_iso8601=None):
     that the 20 orders immediately prior to the given time be returned.
     """
     if before_iso8601:
-        return requests.get(url=f"{satellite_url}/orders/pending?before={before_iso8601}", timeout=30)
+        return requests.get(
+            url=f"{satellite_url}/orders/pending?before={before_iso8601}", timeout=30
+        )
     else:
         return requests.get(url=f"{satellite_url}/orders/pending", timeout=30)
 
@@ -58,7 +62,9 @@ def queued_orders(satellite_url, limit=None):
     Optionally, accepts a parameter specifying how many queued order to return.
     """
     if limit:
-        return requests.get(url=f"{satellite_url}/orders/queued?limit={limit}", timeout=30)
+        return requests.get(
+            url=f"{satellite_url}/orders/queued?limit={limit}", timeout=30
+        )
     else:
         return requests.get(url=f"{satellite_url}/orders/queued", timeout=30)
 
@@ -69,7 +75,9 @@ def sent_orders(satellite_url, before_iso8601=None):
     that the 20 orders immediately prior to the given time be returned.
     """
     if before_iso8601:
-       return requests.get(url=f"{satellite_url}/orders/sent?before={before_iso8601}", timeout=30)
+        return requests.get(
+            url=f"{satellite_url}/orders/sent?before={before_iso8601}", timeout=30
+        )
     else:
         return requests.get(url=f"{satellite_url}/orders/sent", timeout=30)
 
