@@ -14,11 +14,11 @@ setuptools.setup(
     url="https://github.com/willcl-ark/blockstream_blocksat",
     packages=setuptools.find_packages(),
     classifiers=[
-        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.6",
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
     keywords="blockstream blocksat api",
     install_requires=[],
-    python_requires='>=3.7',
+    python_requires='>=3.6',
 )
