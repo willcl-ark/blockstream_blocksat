@@ -7,8 +7,9 @@ TESTNET_SATELLITE_API = "https://api.blockstream.space/testnet"
 def place(message, bid, satellite_url):
     """Place an order for a message transmission.
 
-    If successful, the response includes the JSON Lightning invoice as returned by Lightning
-    Charge's POST /invoice and an authentication token that can be used to modify the order.
+    If successful, the response includes the JSON Lightning invoice as returned by
+    Lightning Charge's POST /invoice and an authentication token that can be used to
+    modify the order.
     """
     data = {"message": message, "bid": bid}
     return requests.post(url=f"{satellite_url}/order", data=data, timeout=30)
@@ -17,8 +18,8 @@ def place(message, bid, satellite_url):
 def bump_order(uuid, auth_token, bid_increase, satellite_url):
     """Increase the bid for an order sitting in the transmission queue.
 
-    A Lightning invoice is returned for it and, when it is paid, the increase is added to the
-    current bid.
+    A Lightning invoice is returned for it and, when it is paid, the increase is added
+    to the current bid.
     """
     data = {"bid_increase": bid_increase, "auth_token": auth_token}
     return requests.post(
@@ -45,8 +46,8 @@ def delete(uuid, auth_token, satellite_url):
 def pending_orders(satellite_url, before_iso8601=None):
     """Retrieve a list of 20 orders awaiting payment ordered by creation time.
 
-    For pagination, optionally specify a before parameter (in ISO 8601 format) that specifies
-    that the 20 orders immediately prior to the given time be returned.
+    For pagination, optionally specify a before parameter (in ISO 8601 format) that
+    specifies that the 20 orders immediately prior to the given time be returned.
     """
     if before_iso8601:
         return requests.get(
@@ -71,8 +72,8 @@ def queued_orders(satellite_url, limit=None):
 
 def sent_orders(satellite_url, before_iso8601=None):
     """Retrieves a list of up to 20 sent orders in reverse chronological order.
-    For pagination, optionally specify a before parameter (in ISO 8601 format) that specifies
-    that the 20 orders immediately prior to the given time be returned.
+    For pagination, optionally specify a before parameter (in ISO 8601 format) that
+    specifies that the 20 orders immediately prior to the given time be returned.
     """
     if before_iso8601:
         return requests.get(
