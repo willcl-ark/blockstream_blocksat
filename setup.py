@@ -3,9 +3,12 @@ import setuptools
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
+with open('requirements.txt') as f:
+    requirements = f.read().splitlines()
+
 setuptools.setup(
     name="blocksat_api",
-    version="0.0.1",
+    version="1.0.0",
     author="Will Clark",
     author_email="will8clark@gmail.com",
     description="Python bindings for Blocksat API",
@@ -19,6 +22,6 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     keywords="blockstream blocksat api",
-    install_requires=[],
+    install_requires=[requirements],
     python_requires='>=3.6',
 )
